@@ -30,4 +30,5 @@ class Review(models.Model):
     rate = models.IntegerField(validators=[MaxValueValidator(5)])
     title = models.CharField(max_length=100)
     comment = models.TextField(null=False, blank=False)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
