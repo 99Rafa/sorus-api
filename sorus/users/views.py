@@ -8,6 +8,7 @@ import requests
 
 from users.models import User
 
+
 class Login(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
@@ -24,6 +25,8 @@ class Login(ObtainAuthToken):
             },
             status=status.HTTP_200_OK
         )
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout(request):
