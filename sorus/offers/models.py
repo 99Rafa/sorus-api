@@ -9,19 +9,12 @@ class Product(models.Model):
     id = models.IntegerField(serialize=True, primary_key=True)
     name = models.CharField(max_length=150, null=False)
     description = models.CharField(max_length=300, null=False)
-    base_price = models.FloatField(null=False)
-    in_offer = models.BooleanField(default=False)
+    price = models.FloatField(null=False)
     image = models.TextField(null=False)
-    state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
-
-
-class Offer(models.Model):
-    id = models.IntegerField(serialize=True, primary_key=True)
-    promoter_id = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING)
-    offer_price = models.FloatField(null=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
+    promoter_id = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING)
 
 
 class Review(models.Model):
