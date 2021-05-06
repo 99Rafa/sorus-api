@@ -1,7 +1,8 @@
 from django.urls import path
 
-from offers.views import create_review
+from offers import views
 
 urlpatterns = [
-    path('review/create/', create_review)
+    path('review/create/', views.create_review),
+    path('product/register/', views.create_offer),
 ]
