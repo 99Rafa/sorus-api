@@ -19,4 +19,4 @@ class Sale(models.Model):
     buy_date = models.DateTimeField(auto_now_add=True)
     seller = models.ForeignKey(User, related_name='seller', on_delete=models.DO_NOTHING)
     buyer = models.ForeignKey(User, related_name='buyer', on_delete=models.DO_NOTHING)
-    buying_method = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
