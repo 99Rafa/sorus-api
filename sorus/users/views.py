@@ -7,6 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from users.models import User
+from users.serializers import (
+    UpdateUserSerializer
+)
 
 
 class Login(ObtainAuthToken):
@@ -45,7 +48,7 @@ def is_authenticated(request):
         status=status.HTTP_200_OK
     )
 
-  
+
 @api_view(['POST'])
 def send_notification_user(request):
     user = User.objects.get(id=request.data['id'])
@@ -60,6 +63,24 @@ def send_notification_user(request):
         return Response(
             data={'message': 'Success'},
             status=status.HTTP_200_OK
+        )
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_user(request):
+    serializer = UpdateUserSerializer(
+        request.user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            data={'message': 'Success'},
+            status=status.HTTP_201_CREATED
+        )
+    else:
+        return Response(
+            data={'message': serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
 
