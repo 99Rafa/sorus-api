@@ -1,11 +1,11 @@
 from django.urls import path
 
-from users.views import (Login, logout, send_notification,
-                         send_notification_user)
+from users import views
 
 urlpatterns = [
-    path('login/', Login.as_view()),
-    path('logout/', logout),
-    path('notification/', send_notification),
-    path('notification/user/', send_notification_user),
+    path('login/', views.Login.as_view()),
+    path('logout/', views.logout),
+    path('is_authenticated/', views.is_authenticated),
+    path('notification/', views.send_notification),
+    path('notification/user/', views.send_notification_user),
 ]

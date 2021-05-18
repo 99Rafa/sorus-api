@@ -36,6 +36,15 @@ def logout(request):
         status=status.HTTP_200_OK
     )
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def is_authenticated(request):
+    return Response(
+        data={'message': 'success'},
+        status=status.HTTP_200_OK
+    )
+
   
 @api_view(['POST'])
 def send_notification_user(request):

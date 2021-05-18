@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.core.validators import MaxValueValidator
 from django.db import models
 
@@ -15,6 +16,12 @@ class Product(models.Model):
     end_date = models.DateTimeField()
     state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
     promoter = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING)
+
+    @property
+    def time_left(self):
+        ed = self.end_date.replace(tzinfo=None)
+        time = ed - datetime.now()
+        return time.days * 86_400 + time.seconds
 
 
 class Review(models.Model):

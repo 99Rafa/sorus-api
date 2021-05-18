@@ -18,4 +18,4 @@ class CreateOfferSerializer(serializers.ModelSerializer):
 class ListOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'start_date', 'end_date']
+        fields = ['id', 'name', 'description', 'price', 'image', 'start_date', 'end_date', 'time_left']
