@@ -21,3 +21,10 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username}"
+
+class User(models.Model):
+    username = models.CharField(primary_key=True, max_length=150, null=False)
+    first_name = models.CharField(max_length=150, null=False)
+    last_name = models.CharField(max_length=150, null=False)
+    email = models.CharField(max_length=150, null=False)
+    password = models.CharField(max_length=150, null=False)

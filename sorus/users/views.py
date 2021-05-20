@@ -8,7 +8,8 @@ from rest_framework.response import Response
 
 from users.models import User
 from users.serializers import (
-    UpdateUserSerializer
+    UpdateUserSerializer,
+    CreateUserSerializer
 )
 
 
@@ -127,3 +128,19 @@ def send_notification_expo_user(token_user, request):
     )
     res = response.json()
     return res
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_user(request):
+    serializer = CreateUserSerializer
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            data={'message': 'Success'},
+            status=status.HTTP_201_CREATED
+        )
+    else:
+        return Response(
+            data={'message': serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )

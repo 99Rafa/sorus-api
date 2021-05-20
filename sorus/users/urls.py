@@ -9,4 +9,5 @@ urlpatterns = [
     path('notification/', views.send_notification),
     path('notification/user/', views.send_notification_user),
     path('profile/update/', views.update_user),
+    path('register/create/', views.create_user)
 ]
