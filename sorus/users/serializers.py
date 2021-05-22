@@ -7,7 +7,14 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name',
-                  'email', 'profile_image', 'password']
+                  'email', 'profile_image']
+
+
+class GetUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name',
+                  'email', 'profile_image']
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
