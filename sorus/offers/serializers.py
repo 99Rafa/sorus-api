@@ -19,3 +19,9 @@ class ListOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'price', 'image', 'start_date', 'end_date', 'time_left']
+
+
+class UpdateOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'description', 'price', 'image', 'end_date']

@@ -9,7 +9,8 @@ from offers.pagination import OffersPagination
 from offers.serializers import (
     CreateReviewSerializer,
     CreateOfferSerializer,
-    ListOfferSerializer
+    ListOfferSerializer,
+    UpdateOfferSerializer
 )
 
 
@@ -76,3 +77,38 @@ def search_offers(request):
     result_page = paginator.paginate_queryset(products, request)
     serializer = ListOfferSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_user_offers(request):
+    products = Product.objects.filter(promoter=request.user)
+    serializer = ListOfferSerializer(products, many=True)
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_product(request):
+    product = Product.objects.get(id=request.data['id'])
+    if request.user == product.promoter:
+        serializer = UpdateOfferSerializer(product, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                data={'message': 'success'},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                data=serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    else:
+        return Response(
+            data={'message': "You don't own this product"},
+            status=status.HTTP_403_FORBIDDEN
+        )
