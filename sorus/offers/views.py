@@ -61,7 +61,8 @@ def list_offers(request):
     products = Product.objects.all().order_by('start_date')
     result_page = paginator.paginate_queryset(products, request)
     serializer = ListOfferSerializer(result_page, many=True)
-    return paginator.get_paginated_response(serializer.data)
+    data = [p for p in serializer.data if p['still_active']]
+    return paginator.get_paginated_response(data)
 
 
 @api_view(['POST'])
@@ -76,7 +77,8 @@ def search_offers(request):
     ).order_by('start_date')
     result_page = paginator.paginate_queryset(products, request)
     serializer = ListOfferSerializer(result_page, many=True)
-    return paginator.get_paginated_response(serializer.data)
+    data = [p for p in serializer.data if p['still_active']]
+    return paginator.get_paginated_response(data)
 
 
 @api_view(['GET'])

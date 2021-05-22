@@ -23,6 +23,10 @@ class Product(models.Model):
         time = ed - datetime.now()
         return time.days * 86_400 + time.seconds
 
+    @property
+    def still_active(self):
+        return self.time_left > 0
+
 
 class Review(models.Model):
     id = models.IntegerField(serialize=True, primary_key=True)
