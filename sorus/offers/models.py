@@ -6,6 +6,13 @@ from status.models import State
 from users.models import User
 
 
+class Category(models.Model):
+    id = models.IntegerField(serialize=True, primary_key=True)
+    name = models.CharField(max_length=100, null=False)
+    description = models.CharField(max_length=200, blank=True)
+    icon_name = models.CharField(max_length=50, null=False, blank=False)
+
+
 class Product(models.Model):
     id = models.IntegerField(serialize=True, primary_key=True)
     name = models.CharField(max_length=150, null=False)
@@ -16,6 +23,7 @@ class Product(models.Model):
     end_date = models.DateTimeField()
     state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
     promoter = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, null=False, on_delete=models.DO_NOTHING)
 
     @property
     def time_left(self):
