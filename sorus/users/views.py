@@ -129,12 +129,18 @@ def send_notification_expo_user(token_user, request):
     res = response.json()
     return res
 
+
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def create_user(request):
-    serializer = CreateUserSerializer
+    data = {
+        **request.data,
+        'state': 1,
+        'user_type': 1
+    }
+    print(data)
+    serializer = CreateUserSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
+        User.objects.create_user(**serializer.validated_data)
         return Response(
             data={'message': 'Success'},
             status=status.HTTP_201_CREATED
