@@ -152,7 +152,6 @@ def create_user(request):
         'state': 1,
         'user_type': 1
     }
-    print(data)
     serializer = CreateUserSerializer(data=data)
     if serializer.is_valid():
         User.objects.create_user(**serializer.validated_data)
