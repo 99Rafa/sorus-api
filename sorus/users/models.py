@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from users.default_image import image
 
 from status.models import State
 
@@ -15,7 +16,7 @@ class UserType(models.Model):
 
 class User(AbstractUser):
     notification_token = models.CharField(max_length=50)
-    profile_image = models.TextField()
+    profile_image = models.TextField(default=image)
     user_type = models.ForeignKey(UserType, null=False, on_delete=models.DO_NOTHING)
     state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
 
