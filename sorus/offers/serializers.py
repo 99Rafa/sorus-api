@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from offers.models import Product, Review
+from offers.models import Product, Review, Category
 
 
 class CreateReviewSerializer(serializers.ModelSerializer):
@@ -26,3 +26,9 @@ class UpdateOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'price', 'image', 'end_date', 'category']
+
+
+class ListCategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'icon_name']

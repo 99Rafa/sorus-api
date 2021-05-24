@@ -4,13 +4,14 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from offers.models import Product
+from offers.models import Product, Category
 from offers.pagination import OffersPagination
 from offers.serializers import (
     CreateReviewSerializer,
     CreateOfferSerializer,
     ListOfferSerializer,
-    UpdateOfferSerializer
+    UpdateOfferSerializer,
+    ListCategoriesSerializer
 )
 
 
@@ -56,25 +57,18 @@ def create_offer(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_offers(request):
+    args = request.GET
     paginator = OffersPagination()
     paginator.page_size = 15
-    products = Product.objects.all().order_by('start_date')
-    result_page = paginator.paginate_queryset(products, request)
-    serializer = ListOfferSerializer(result_page, many=True)
-    data = [p for p in serializer.data if p['still_active']]
-    return paginator.get_paginated_response(data)
+    products = Product.objects.filter(state=1).order_by('start_date')
 
+    if 'category' in args:
+        products = products.filter(category=args['category'])
+    if 'query' in args:
+        products = products.filter(
+            Q(name__icontains=args['query']) | Q(description__icontains=args['query'])
+        )
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def search_offers(request):
-    paginator = OffersPagination()
-    paginator.page_size = 15
-    query = request.data
-    products = Product.objects.filter(
-        Q(state=1),
-        Q(name__icontains=query) | Q(description__icontains=query)
-    ).order_by('start_date')
     result_page = paginator.paginate_queryset(products, request)
     serializer = ListOfferSerializer(result_page, many=True)
     data = [p for p in serializer.data if p['still_active']]
@@ -114,3 +108,14 @@ def update_product(request):
             data={'message': "You don't own this product"},
             status=status.HTTP_403_FORBIDDEN
         )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_categories(request):
+    categories = Category.objects.all()
+    serializer = ListCategoriesSerializer(categories, many=True)
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )
