@@ -1,12 +1,14 @@
 import requests
-from rest_framework import serializers, status
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from users.models import User
+from users.models import User, State
+from users.permissions import IsAdmin
 from users.serializers import (
     UpdateUserSerializer,
     CreateUserSerializer,
@@ -21,6 +23,13 @@ class Login(ObtainAuthToken):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+
+        if user.state.id == 2:
+            return Response(
+                data={'message': 'This user is blocked'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         token, created = Token.objects.get_or_create(user=user)
         return Response(
             data={
@@ -150,7 +159,7 @@ def create_user(request):
     data = {
         **request.data,
         'state': 1,
-        'user_type': 1
+        'user_type': 2  # Regular user
     }
     serializer = CreateUserSerializer(data=data)
     if serializer.is_valid():
@@ -164,3 +173,16 @@ def create_user(request):
             data={'message': serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def block_user(request):
+    user = get_object_or_404(User, id=request.data['user_id'])
+    state = State.objects.get(id=2)  # Disabled state
+    user.state = state
+    user.save()
+    return Response(
+        data={'message': 'success'},
+        status=status.HTTP_200_OK
+    )
