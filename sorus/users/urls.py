@@ -12,4 +12,5 @@ urlpatterns = [
     path('register/create/', views.create_user),
     path('profile/info/', views.get_info_user),
     path('profile/subscription/', views.update_user_subcription),
+    path('block/', views.block_user),
 ]
