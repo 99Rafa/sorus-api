@@ -19,6 +19,7 @@ class User(AbstractUser):
     profile_image = models.TextField(default=image)
     user_type = models.ForeignKey(UserType, null=False, on_delete=models.DO_NOTHING)
     state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
+    address = models.TextField()
 
     def __str__(self):
         return f"{self.username}"
