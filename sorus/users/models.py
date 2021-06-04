@@ -26,6 +26,8 @@ class User(AbstractUser):
     profile_image = models.TextField(default=image)
     user_type = models.ForeignKey(UserType, null=False, on_delete=models.DO_NOTHING)
     state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
+    address = models.TextField()
+    stars = models.IntegerField(default=0)
     subscription = models.ForeignKey(Subscription, null=False, on_delete=models.DO_NOTHING, default=1)
 
     def __str__(self):

@@ -13,7 +13,7 @@ from offers.serializers import (
     UpdateOfferSerializer,
     ListCategoriesSerializer
 )
-from users.models import Subscription
+from users.models import User
 
 
 @api_view(['POST'])
@@ -87,6 +87,18 @@ def list_offers(request):
 def list_user_offers(request):
     products = Product.objects.filter(promoter=request.user)
     serializer = ListOfferSerializer(products, many=True)
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_top_offers(request):    
+    top_users = User.objects.filter(state=1).order_by('stars').values('pk').distinct()[:2]
+    top_offers = Product.objects.filter(promoter__in=top_users, state=1).order_by('start_date')[:2]
+    serializer = ListOfferSerializer(top_offers, many=True)
     return Response(
         data=serializer.data,
         status=status.HTTP_200_OK
