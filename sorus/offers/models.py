@@ -44,4 +44,3 @@ class Review(models.Model):
     comment = models.TextField(null=False, blank=False)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
-    stars = models.IntegerField(default=0)
