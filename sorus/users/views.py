@@ -12,7 +12,8 @@ from users.permissions import IsAdmin
 from users.serializers import (
     UpdateUserSerializer,
     CreateUserSerializer,
-    GetUserSerializer
+    GetUserSerializer,
+    UpdateUserSubscriptionSerializer
 )
 
 
@@ -164,6 +165,27 @@ def create_user(request):
     serializer = CreateUserSerializer(data=data)
     if serializer.is_valid():
         User.objects.create_user(**serializer.validated_data)
+        return Response(
+            data={'message': 'Success'},
+            status=status.HTTP_201_CREATED
+        )
+    else:
+        return Response(
+            data={'message': serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def update_user_subcription(request):
+    sub = {'subscription': 2}
+    user = User.objects.get(id=request.user.id)
+    serializer = UpdateUserSubscriptionSerializer(
+        user, data=sub, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
         return Response(
             data={'message': 'Success'},
             status=status.HTTP_201_CREATED

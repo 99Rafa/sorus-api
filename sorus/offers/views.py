@@ -13,6 +13,7 @@ from offers.serializers import (
     UpdateOfferSerializer,
     ListCategoriesSerializer
 )
+from users.models import Subscription
 
 
 @api_view(['POST'])
@@ -35,6 +36,11 @@ def create_review(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_offer(request):
+    if request.user.subscription.id == 1 and Product.objects.filter(promoter=request.user.id, state=1).count() >= 5:
+        return Response(
+            data={'message': 'error'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     data = {
         **request.data,
         'promoter': request.user.pk,
@@ -66,7 +72,8 @@ def list_offers(request):
         products = products.filter(category=args['category'])
     if 'query' in args:
         products = products.filter(
-            Q(name__icontains=args['query']) | Q(description__icontains=args['query'])
+            Q(name__icontains=args['query']) | Q(
+                description__icontains=args['query'])
         )
 
     result_page = paginator.paginate_queryset(products, request)
@@ -91,7 +98,8 @@ def list_user_offers(request):
 def update_product(request):
     product = Product.objects.get(id=request.data['id'])
     if request.user == product.promoter:
-        serializer = UpdateOfferSerializer(product, data=request.data, partial=True)
+        serializer = UpdateOfferSerializer(
+            product, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(
