@@ -21,6 +21,8 @@ class Product(models.Model):
     image = models.TextField(null=False)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
+    stock = models.IntegerField(validators=[MaxValueValidator(100)], default=1)
+    is_offer = models.BooleanField(default=True)
     state = models.ForeignKey(State, null=False, on_delete=models.DO_NOTHING)
     promoter = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING)
     category = models.ForeignKey(Category, null=False, on_delete=models.DO_NOTHING)

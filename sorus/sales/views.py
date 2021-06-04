@@ -27,8 +27,11 @@ def buy_product(request):
     serializer = CreateSaleSerializer(data=sale_data)
     if serializer.is_valid():
         product = serializer.validated_data['product']
-        product.state = State.objects.get(id=2)
+        product.stock -= 1
+        if product.stock == 0:
+            product.state = State.objects.get(id=2)
         product.save()
+
         return Response(
             data={'message': 'success'},
             status=status.HTTP_200_OK
