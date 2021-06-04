@@ -28,7 +28,7 @@ def buy_product(request):
     if serializer.is_valid():
         product = serializer.validated_data['product']
         product.stock -= 1
-        if product.stock == 0:
+        if product.stock <= 0:
             product.state = State.objects.get(id=2)
         product.save()
 

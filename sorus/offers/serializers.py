@@ -6,7 +6,7 @@ from offers.models import Product, Review, Category
 class CreateReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ['date', 'rate', 'title', 'comment', 'product', 'user']
+        fields = ['rate', 'title', 'comment', 'product', 'user']
 
 
 class CreateOfferSerializer(serializers.ModelSerializer):

@@ -186,3 +186,18 @@ def block_user(request):
         data={'message': 'success'},
         status=status.HTTP_200_OK
     )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_stars(request):
+    print(request.data)
+    data = request.data
+    user = User.objects.get(product__id=data['product'])
+    user.stars += data['stars']
+    user.save()
+    return Response(
+        data={'message', 'success'},
+        status=status.HTTP_200_OK
+    )
+

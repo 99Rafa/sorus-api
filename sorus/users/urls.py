@@ -12,4 +12,5 @@ urlpatterns = [
     path('register/create/', views.create_user),
     path('profile/info/', views.get_info_user),
     path('block/', views.block_user),
+    path('add_stars/', views.add_stars)
 ]

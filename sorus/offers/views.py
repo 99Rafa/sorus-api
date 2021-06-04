@@ -1,3 +1,5 @@
+from random import randint
+
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -13,13 +15,16 @@ from offers.serializers import (
     UpdateOfferSerializer,
     ListCategoriesSerializer
 )
-from users.models import User
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_review(request):
-    serializer = CreateReviewSerializer(data=request.data)
+    data = {
+        **request.data,
+        'user': request.user.id
+    }
+    serializer = CreateReviewSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
         return Response(
@@ -75,6 +80,8 @@ def list_offers(request):
             Q(name__icontains=args['query']) | Q(
                 description__icontains=args['query'])
         )
+    if 'hot' in args:
+        products = products.order_by('promoter__stars')
 
     result_page = paginator.paginate_queryset(products, request)
     serializer = ListOfferSerializer(result_page, many=True)
@@ -85,7 +92,7 @@ def list_offers(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_user_offers(request):
-    products = Product.objects.filter(promoter=request.user)
+    products = Product.objects.filter(promoter=request.user, state=1)
     serializer = ListOfferSerializer(products, many=True)
     return Response(
         data=serializer.data,
@@ -95,9 +102,15 @@ def list_user_offers(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def list_top_offers(request):    
-    top_users = User.objects.filter(state=1).order_by('stars').values('pk').distinct()[:2]
-    top_offers = Product.objects.filter(promoter__in=top_users, state=1).order_by('start_date')[:2]
+def list_top_offers(request):
+    offers = Product.objects.filter(promoter__subscription=2, state=1)
+
+    total = len(offers)
+    top_offers = [
+        offers[randint(0, int(total / 2))],
+        offers[randint(int(total / 2) + 1, total - 1)]
+    ]
+
     serializer = ListOfferSerializer(top_offers, many=True)
     return Response(
         data=serializer.data,
