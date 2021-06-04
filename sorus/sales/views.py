@@ -5,7 +5,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from status.models import State
-from sales.serializers import CreateSaleSerializer
+from users.models import User
+from sales.serializers import (
+    CreateSaleSerializer,
+    UpdateUserSubscriptionSerializer
+)
 
 
 @api_view(['POST'])
@@ -39,4 +43,18 @@ def buy_product(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def buy_subscription(request):
-    pass
+    sub = {'subscription': 2}
+    user = User.objects.get(id=request.data['user'])
+    serializer = UpdateUserSubscriptionSerializer(user, data=sub, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            data={'message': 'Success'},
+            status=status.HTTP_201_CREATED
+        )
+    else:
+        return Response(
+            data={'message': serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )

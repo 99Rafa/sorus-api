@@ -22,9 +22,3 @@ class CreateUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'first_name', 'last_name',
                   'email', 'password', 'state', 'user_type']
-
-
-class UpdateUserSubscriptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['subscription']
