@@ -6,9 +6,11 @@ from rest_framework.response import Response
 
 from status.models import State
 from users.models import User
+from offers.models import Product
 from sales.serializers import (
     CreateSaleSerializer,
-    UpdateUserSubscriptionSerializer
+    UpdateUserSubscriptionSerializer,
+    ListUserBuysSerializer
 )
 
 
@@ -31,7 +33,7 @@ def buy_product(request):
         if product.stock <= 0:
             product.state = State.objects.get(id=2)
         product.save()
-
+        serializer.save()
         return Response(
             data={'message': 'success'},
             status=status.HTTP_200_OK
@@ -61,3 +63,25 @@ def buy_subscription(request):
             data={'message': serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_buys(request):
+    products = Product.objects.filter(sale__buyer__id=request.user.id)
+    serializer = ListUserBuysSerializer(products, many=True)
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_sales(request):
+    products = Product.objects.filter(sale__product__promoter=request.user.id)
+    serializer = ListUserBuysSerializer(products, many=True)
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )

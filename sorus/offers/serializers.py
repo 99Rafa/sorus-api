@@ -9,6 +9,12 @@ class CreateReviewSerializer(serializers.ModelSerializer):
         fields = ['rate', 'title', 'comment', 'product', 'user']
 
 
+class ListReviewsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['rate', 'title', 'comment']
+
+
 class CreateOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product

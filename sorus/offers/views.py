@@ -6,14 +6,15 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from offers.models import Product, Category
+from offers.models import Product, Category, Review
 from offers.pagination import OffersPagination
 from offers.serializers import (
     CreateReviewSerializer,
     CreateOfferSerializer,
     ListOfferSerializer,
     UpdateOfferSerializer,
-    ListCategoriesSerializer
+    ListCategoriesSerializer,
+    ListReviewsSerializer
 )
 
 
@@ -36,6 +37,18 @@ def create_review(request):
             data={'message': serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def list_comments(request):
+    reviews = Review.objects.filter(product=request.data['product']).order_by('-date')
+    serializer = ListReviewsSerializer(reviews, many=True)
+    return Response(
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )
+    pass
 
 
 @api_view(['POST'])
