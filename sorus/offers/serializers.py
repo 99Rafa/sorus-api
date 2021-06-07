@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from offers.models import Product, Review, Category
+from users.models import User
 
 
 class CreateReviewSerializer(serializers.ModelSerializer):
@@ -22,11 +23,19 @@ class CreateOfferSerializer(serializers.ModelSerializer):
                   'promoter', 'state', 'category', 'stock', 'is_offer']
 
 
+class UserStarsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['stars']
+
+
 class ListOfferSerializer(serializers.ModelSerializer):
+    promoter = UserStarsSerializer(many=False, read_only=True)
+
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'price', 'image', 'stock', 'is_offer',
-                  'start_date', 'end_date', 'time_left', 'still_active', 'category']
+                  'start_date', 'end_date', 'time_left', 'still_active', 'category', 'promoter']
 
 
 class UpdateOfferSerializer(serializers.ModelSerializer):
