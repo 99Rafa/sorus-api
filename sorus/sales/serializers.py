@@ -8,7 +8,7 @@ from offers.models import Product
 class CreateSaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
-        fields = ['quantity', 'price', 'buy_method', 'buy_date', 'buyer', 'product']
+        fields = ['quantity', 'price', 'buy_method', 'buy_date', 'buyer', 'product', 'reference']
 
 
 class UpdateUserSubscriptionSerializer(serializers.ModelSerializer):
@@ -17,7 +17,15 @@ class UpdateUserSubscriptionSerializer(serializers.ModelSerializer):
         fields = ['subscription']
 
 
-class ListUserBuysSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['name', 'image', 'price']
+
+
+class ListUserBuysSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Sale
+        fields = ['reference', 'product', 'buy_date']

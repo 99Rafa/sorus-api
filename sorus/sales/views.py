@@ -1,4 +1,6 @@
 from datetime import datetime
+from uuid import uuid4
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -7,6 +9,7 @@ from rest_framework.response import Response
 from status.models import State
 from users.models import User
 from offers.models import Product
+from sales.models import Sale
 from sales.serializers import (
     CreateSaleSerializer,
     UpdateUserSubscriptionSerializer,
@@ -24,7 +27,8 @@ def buy_product(request):
         'price': req_data['total'],
         'quantity': 1,
         'buy_method': 1,
-        'buy_date': datetime.now()
+        'buy_date': datetime.now(),
+        'reference': str(uuid4())
     }
     serializer = CreateSaleSerializer(data=sale_data)
     if serializer.is_valid():
@@ -68,8 +72,8 @@ def buy_subscription(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_buys(request):
-    products = Product.objects.filter(sale__buyer__id=request.user.id)
-    serializer = ListUserBuysSerializer(products, many=True)
+    sale = Sale.objects.filter(buyer=request.user.id)
+    serializer = ListUserBuysSerializer(sale, many=True)
     return Response(
         data=serializer.data,
         status=status.HTTP_200_OK
@@ -79,8 +83,8 @@ def list_buys(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_sales(request):
-    products = Product.objects.filter(sale__product__promoter=request.user.id)
-    serializer = ListUserBuysSerializer(products, many=True)
+    sales = Sale.objects.filter(product__promoter=request.user.id)
+    serializer = ListUserBuysSerializer(sales, many=True)
     return Response(
         data=serializer.data,
         status=status.HTTP_200_OK
