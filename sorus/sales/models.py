@@ -17,6 +17,6 @@ class Sale(models.Model):
     price = models.FloatField(null=False)
     buy_method = models.ForeignKey(BuyMethod, on_delete=models.DO_NOTHING)
     buy_date = models.DateTimeField(auto_now_add=True)
-    seller = models.ForeignKey(User, related_name='seller', on_delete=models.DO_NOTHING)
+    reference = models.CharField(max_length=36, null=False, blank=False)
     buyer = models.ForeignKey(User, related_name='buyer', on_delete=models.DO_NOTHING)
-    buying_method = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
